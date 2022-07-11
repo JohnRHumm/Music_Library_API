@@ -13,16 +13,20 @@ def song_list(request):
         serializer = SongSerializer(songs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'POST':
-        serializer=SongSerializer(data = request.data)
-        serializer.is_valid(raise_exception = True)
+        serializer = SongSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status = status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@ api_view(['GET'])
+@ api_view(['GET', 'PUT'])
 def song_detail(request, pk):
-    
-    song=get_object_or_404(Song,pk = pk)
-    serializer=SongSerializer(song)
-    return Response(serializer.data, status = status.HTTP_200_OK)
-    
+    song = get_object_or_404(Song, pk=pk)
+    if request.method == 'GET':
+        serializer = SongSerializer(song)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'PUT':
+        serializer = SongSerializer(song, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
